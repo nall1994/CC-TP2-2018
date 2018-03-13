@@ -21,12 +21,6 @@ public class MonitorUDP {
 			DatagramPacket dp = new DatagramPacket(msg.getBytes(),msg.length(),group,8888);
 			ms.send(dp);
 
-			byte[] buf = new byte[1000];
-			DatagramPacket recv = new DatagramPacket(buf,buf.length);
-			ms.receive(recv);
-			String sentence = new String(recv.getData());
-			System.out.println(sentence);
-
 			} catch(UnknownHostException ex) {
 				ex.printStackTrace();
 			} catch(IOException ex) {

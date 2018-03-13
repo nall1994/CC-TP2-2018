@@ -15,10 +15,6 @@ public class AgenteUDP {
 			group = InetAddress.getByName("239.8.8.8");
 			ms.joinGroup(group);
 
-			String msg = "Agente sending to Monitor";
-			DatagramPacket dp = new DatagramPacket(msg.getBytes(),msg.length(),group,8888);
-			ms.send(dp);
-
 			byte[] buf = new byte[1000];
 			DatagramPacket recv = new DatagramPacket(buf,buf.length);
 			ms.receive(recv);
