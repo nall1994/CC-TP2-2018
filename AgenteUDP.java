@@ -26,9 +26,9 @@ public class AgenteUDP {
 			System.out.println(sentence);
 
 			} catch(UnknownHostException ex) {
-				System.out.println("unknown host exception");
+				ex.printStackTrace();
 			} catch(IOException ex) {
-				System.out.println("ioexception");
+				ex.printStackTrace();
 			}
 	} 
 
