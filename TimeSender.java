@@ -18,9 +18,11 @@ public class TimeSender extends Thread{
 	}
 
 	public void run() {
+		//Criar pacote a enviar
 		String msg = "SendYourInfo";
 		DatagramPacket dp = new DatagramPacket(msg.getBytes(),msg.length(),group,porta);
 		try {
+			//Enviar pacote e dormir durante seconds_between_probes segundos
 			ms.send(dp);
 			Thread.sleep(seconds_between_probes*1000);
 		} catch(InterruptedException ie) {
