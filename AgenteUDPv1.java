@@ -8,7 +8,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
 
-public class AgenteUDP {
+public class AgenteUDPv1 {
 
 	public static void main(String[] args) {
 
@@ -20,29 +20,32 @@ public class AgenteUDP {
 		InetAddress group;
 		DatagramSocket socket;
 		String sentence;
-		
-		try {
-			//juntar ao grupo multicast para ouvir os probings
-			ms = new MulticastSocket(porta);
-			group = InetAddress.getByName("239.8.8.8");
-			ms.joinGroup(group);
+		while(true) {
+			try {
+				//juntar ao grupo multicast para ouvir os probings
+				ms = new MulticastSocket(porta);
+				group = InetAddress.getByName("239.8.8.8");
+				ms.joinGroup(group);
 
-			byte[] buf = new byte[1000];
-			DatagramPacket recv = new DatagramPacket(buf,buf.length);
-			ms.receive(recv);
-			sentence = new String(recv.getData());
-			//System.out.println(sentence);
+				byte[] buf = new byte[1000];
+				DatagramPacket recv = new DatagramPacket(buf,buf.length);
+				ms.receive(recv);
+				sentence = new String(recv.getData());
+				//System.out.println(sentence);
 
-			if(sentence.equals("SendYourInfo")){
-			
-				//criar o pacote com a info pedida
-				String message = ramUsage + ";" + cpuUsage;
-				DatagramPacket pacote = new DatagramPacket(message.getBytes(),message.length());
+				if(sentence.equals("SendYourInfo")){
+					
+					InetAddress ipaddress = recv.getAddress();
+					int port = recv.getPort();
+					//criar o pacote com a info pedida
+					String message = ramUsage + ";" + cpuUsage;
+					DatagramPacket pacote = new DatagramPacket(message.getBytes(),message.length(),ipaddress,port);
 
-				//Enviar pacote para o monitor
-				socket = new DatagramSocket(porta);
-				socket.send(pacote);
-			}
+					//Enviar pacote para o monitor
+					socket = new DatagramSocket();
+					socket.send(pacote);
+					socket.close();
+				}
 
 			} catch(UnknownHostException ex) {
 				ex.printStackTrace();
@@ -50,6 +53,8 @@ public class AgenteUDP {
 				ex.printStackTrace();
 			}
 
+		}
+		
 	} 
 
 }		
