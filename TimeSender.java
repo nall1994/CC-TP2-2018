@@ -23,7 +23,6 @@ public class TimeSender extends Thread {
 				String msg = "SendYourInfo";
 				DatagramPacket dp = new DatagramPacket(msg.getBytes(),msg.length(),group,porta);
 				ms.send(dp);
-				System.out.println("sent probe");
 				ms.leaveGroup(group);
 				ms.close();
 			} catch(UnknownHostException uhe) {

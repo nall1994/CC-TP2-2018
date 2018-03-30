@@ -24,15 +24,14 @@ public class MonitorUDP {
 						byte[] msg = new byte[1000];
 						DatagramPacket dp = new DatagramPacket(msg,msg.length);
 						DatagramSocket ds = new DatagramSocket(porta);
-						System.out.println("received");
 						ds.receive(dp);
-						System.out.println("after received");
 						ds.close();
 						String received = new String(dp.getData());
 						String parts[] = received.split(";");
 						String ipaddress = dp.getAddress().getHostAddress();
 						int port = dp.getPort();
 						estado.updateUsage(ipaddress,port,Float.parseFloat(parts[0]),Float.parseFloat(parts[1]));
+						estado.printStateTable();
 					} catch(SocketException se) {
 						se.printStackTrace();
 					} catch(IOException ioe) {

@@ -2,12 +2,12 @@
 
 public class ServerStructure {
 	private int porta;
-	private float ram_usage;
-	private float cpu_usage;
+	private double ram_usage;
+	private double cpu_usage;
 	private long rtt;
 	private float largura_banda;
 
-	public ServerStructure(int porta, float ram_usage, float cpu_usage, long rtt, float largura_banda) {
+	public ServerStructure(int porta, double ram_usage, double cpu_usage, long rtt, float largura_banda) {
 		this.porta = porta;
 		this.ram_usage = ram_usage;
 		this.cpu_usage = cpu_usage;
@@ -19,11 +19,11 @@ public class ServerStructure {
 		return this.porta;
 	}
 
-	public float getRam_Usage() {
+	public double getRam_Usage() {
 		return this.ram_usage;
 	}
 
-	public float getCpu_usage() {
+	public double getCpu_usage() {
 		return this.cpu_usage;
 	}
 
@@ -39,11 +39,11 @@ public class ServerStructure {
 		this.porta = porta;
 	} 
 
-	public void setRam_Usage(float ram_usage) {
+	public void setRam_Usage(double ram_usage) {
 		this.ram_usage = ram_usage;
 	}
 
-	public void setCpu_Usage(float cpu_usage) {
+	public void setCpu_Usage(double cpu_usage) {
 		this.cpu_usage = cpu_usage;
 	}
 

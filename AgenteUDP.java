@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.lang.management.ManagementFactory;
+import com.sun.management.OperatingSystemMXBean;
 
 public class AgenteUDP {
 
@@ -11,8 +13,9 @@ public class AgenteUDP {
 		MulticastSocket ms;
 		InetAddress group;
 		int porta = 8888;
-		float ram_usage = 0.25f;
-		float cpu_usage = 0.1f;
+		double ram_usage = 0.0;
+		double cpu_usage = 0.0;
+		int MB = 1024;
 
 		while(true) {
 			try {
@@ -23,15 +26,17 @@ public class AgenteUDP {
 				byte[] buf = new byte[1000];
 				DatagramPacket received = new DatagramPacket(buf,buf.length);
 				ms.receive(received);
-				System.out.println("received");
 				ms.leaveGroup(group);
 				ms.close();
 				String sentence = new String(received.getData());
-				System.out.println(sentence.equalsIgnoreCase("SendYourInfo"));
-
 					InetAddress ipaddress = received.getAddress();
 					int port = received.getPort();
-
+					OperatingSystemMXBean osBean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+					float total_mem = (float) (osBean.getTotalPhysicalMemorySize() / MB);
+					float used_mem = (float) (total_mem - (osBean.getFreePhysicalMemorySize() / MB));
+					float cpu_load = (float) osBean.getSystemCpuLoad();
+					ram_usage = (double) (used_mem / total_mem) * 100;
+					cpu_usage = (double) (cpu_load * 100);
 					String message = ram_usage + ";" + cpu_usage;
 					DatagramPacket dp = new DatagramPacket(message.getBytes(),message.length(),ipaddress,porta);
 					DatagramSocket ds = new DatagramSocket();
@@ -45,8 +50,5 @@ public class AgenteUDP {
 			}
 			
 		}
-	} 
-
-
-
+	}
  }		

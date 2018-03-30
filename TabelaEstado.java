@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.util.Iterator;
 
 public class TabelaEstado {
 	HashMap<String,ServerStructure> servidores;
@@ -7,7 +8,7 @@ public class TabelaEstado {
 		servidores = new HashMap<String,ServerStructure>();
 	}
 
-	public void updateUsage(String IP, int porta,float ram_usage,float cpu_usage) {
+	public void updateUsage(String IP, int porta,double ram_usage,double cpu_usage) {
 		ServerStructure ss = servidores.get(IP);
 		if(ss == null) {
 			ss = new ServerStructure(porta,ram_usage,cpu_usage,0,0.0f);
@@ -41,6 +42,16 @@ public class TabelaEstado {
 			ss.setPorta(porta);
 		}
 		return 1; //tudo ok
+	}
+
+	public void printStateTable() {
+		System.out.println("IP-----------------Porta---------------------CPU---------------------RAM");
+		Iterator it = servidores.entrySet().iterator();
+		while(it.hasNext()) {
+			HashMap.Entry par = (HashMap.Entry) it.next();
+			System.out.println(par.getKey() + "-----------------" + ((ServerStructure) par.getValue()).getPorta() + "---------------------" + ((ServerStructure)par.getValue()).getCpu_usage() + "---------------------" + ((ServerStructure) par.getValue()).getRam_Usage());
+			it.remove();
+		}
 	}
 
 
