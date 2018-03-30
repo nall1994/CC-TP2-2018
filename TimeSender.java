@@ -1,39 +1,41 @@
+import java.net.*;
 import java.lang.Thread;
-import java.net.MulticastSocket;
-import java.net.InetAddress;
-import java.net.DatagramPacket;
 import java.io.IOException;
 
-public class TimeSender extends Thread{
-	MulticastSocket ms;
-	InetAddress group;
+public class TimeSender extends Thread {
 	int porta;
 	int seconds_between_probes;
 
-	public TimeSender(MulticastSocket ms, InetAddress group,int porta) {
-		this.ms = ms;
-		this.group = group;
+	public TimeSender(int porta, int seconds_between_probes) {
 		this.porta = porta;
-		this.seconds_between_probes = 5;
+		this.seconds_between_probes = seconds_between_probes;
 	}
 
 	public void run() {
+
+
 		while(true) {
-			//Criar pacote a enviar
-			String msg = "SendYourInfo";
-			DatagramPacket dp = new DatagramPacket(msg.getBytes(),msg.length(),group,porta);
 			try {
-				//Enviar pacote e dormir durante seconds_between_probes segundos
+				MulticastSocket ms = new MulticastSocket();
+				InetAddress group = InetAddress.getByName("239.8.8.8");
+				ms.joinGroup(group);
+
+				String msg = "SendYourInfo";
+				DatagramPacket dp = new DatagramPacket(msg.getBytes(),msg.length(),group,porta);
 				ms.send(dp);
-				Thread.sleep(seconds_between_probes*1000);
-			} catch(InterruptedException ie) {
-				ie.printStackTrace();
+				System.out.println("sent probe");
+				ms.leaveGroup(group);
+				ms.close();
+			} catch(UnknownHostException uhe) {
+				uhe.printStackTrace();
 			} catch(IOException ioe) {
 				ioe.printStackTrace();
 			}
+			try {
+				Thread.sleep(seconds_between_probes*1000);
+			} catch(InterruptedException ex) {
+				ex.printStackTrace();
+			}	
 		}
-		
-		
-	}	
-
+	}
 }

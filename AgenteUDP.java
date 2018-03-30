@@ -3,6 +3,7 @@ import java.net.MulticastSocket;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 
 public class AgenteUDP {
 
@@ -10,22 +11,40 @@ public class AgenteUDP {
 		MulticastSocket ms;
 		InetAddress group;
 		int porta = 8888;
-		try {
-			ms = new MulticastSocket(porta);
-			group = InetAddress.getByName("239.8.8.8");
-			ms.joinGroup(group);
+		float ram_usage = 0.25f;
+		float cpu_usage = 0.1f;
 
-			byte[] buf = new byte[1000];
-			DatagramPacket recv = new DatagramPacket(buf,buf.length);
-			ms.receive(recv);
-			String sentence = new String(recv.getData());
-			System.out.println(sentence);
+		while(true) {
+			try {
+				ms = new MulticastSocket(porta);
+				group = InetAddress.getByName("239.8.8.8");
+				ms.joinGroup(group);
 
-			} catch(UnknownHostException ex) {
-				ex.printStackTrace();
-			} catch(IOException ex) {
-				ex.printStackTrace();
+				byte[] buf = new byte[1000];
+				DatagramPacket received = new DatagramPacket(buf,buf.length);
+				ms.receive(received);
+				System.out.println("received");
+				ms.leaveGroup(group);
+				ms.close();
+				String sentence = new String(received.getData());
+				System.out.println(sentence.equalsIgnoreCase("SendYourInfo"));
+
+					InetAddress ipaddress = received.getAddress();
+					int port = received.getPort();
+
+					String message = ram_usage + ";" + cpu_usage;
+					DatagramPacket dp = new DatagramPacket(message.getBytes(),message.length(),ipaddress,porta);
+					DatagramSocket ds = new DatagramSocket();
+					ds.send(dp);
+					System.out.println("Sent");
+					ds.close();
+			} catch (UnknownHostException uhe) {
+				uhe.printStackTrace();
+			} catch(IOException ioe) {
+				ioe.printStackTrace();
 			}
+			
+		}
 	} 
 
 
