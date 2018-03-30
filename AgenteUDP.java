@@ -6,6 +6,8 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.lang.management.ManagementFactory;
 import com.sun.management.OperatingSystemMXBean;
+import java.util.concurrent.TimeUnit;
+import java.util.Random;
 
 public class AgenteUDP {
 
@@ -40,6 +42,15 @@ public class AgenteUDP {
 					String message = ram_usage + ";" + cpu_usage;
 					DatagramPacket dp = new DatagramPacket(message.getBytes(),message.length(),ipaddress,porta);
 					DatagramSocket ds = new DatagramSocket();
+					Random rand = new Random();
+					int wait = rand.nextInt(10);
+					try{
+						TimeUnit.MILLISECONDS.sleep(wait);
+					} catch(InterruptedException ex) {
+						ex.printStackTrace();
+					}
+					
+					System.out.println(wait);
 					ds.send(dp);
 					System.out.println("Sent");
 					ds.close();
