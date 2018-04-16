@@ -20,7 +20,8 @@ public class TimeSender extends Thread {
 				InetAddress group = InetAddress.getByName("239.8.8.8");
 				ms.joinGroup(group);
 
-				String msg = "SendYourInfo";
+				String msg_temp = "probe";
+				String msg = new String(msg_temp.getBytes(), "UTF-8");
 				DatagramPacket dp = new DatagramPacket(msg.getBytes(),msg.length(),group,porta);
 				ms.send(dp);
 				ms.leaveGroup(group);

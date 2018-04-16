@@ -30,9 +30,8 @@ public class AgenteUDP {
 				ms.receive(received);
 				ms.leaveGroup(group);
 				ms.close();
-				String sentence = new String(received.getData());
+				String sentence = new String(received.getData(),"UTF-8");
 					InetAddress ipaddress = received.getAddress();
-					int port = received.getPort();
 					OperatingSystemMXBean osBean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
 					float total_mem = (float) (osBean.getTotalPhysicalMemorySize() / MB);
 					float used_mem = (float) (total_mem - (osBean.getFreePhysicalMemorySize() / MB));
@@ -49,10 +48,9 @@ public class AgenteUDP {
 					} catch(InterruptedException ex) {
 						ex.printStackTrace();
 					}
+
 					
-					System.out.println(wait);
 					ds.send(dp);
-					System.out.println("Sent");
 					ds.close();
 			} catch (UnknownHostException uhe) {
 				uhe.printStackTrace();

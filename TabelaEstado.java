@@ -19,8 +19,6 @@ public class TabelaEstado {
 			ss.setRam_Usage(ram_usage);
 			ss.setCpu_Usage(cpu_usage);
 		}
-
-		System.out.println("Usage Updated: " + "ram - " + ram_usage + "; cpu - " + cpu_usage);
 	}
 
 	public int update_largura_de_banda(String IP,int porta,float largura_banda) {
@@ -48,7 +46,7 @@ public class TabelaEstado {
 	public void printStateTable() {
 		System.out.println("IP-----------------Porta---------------------CPU---------------------RAM\n");
 		for(Map.Entry<String,ServerStructure> entry : servidores.entrySet()) {
-			System.out.println(entry.getKey() + "-----------------" + entry.getValue().getPorta() + "---------------------" + entry.getValue().getCpu_usage() + "---------------------" + entry.getValue().getRam_Usage() + "\n");
+			System.out.println(entry.getKey() + "-----------------" + entry.getValue().getPorta() + "---------------------" + entry.getValue().getCpu_usage() + "---------------------" + entry.getValue().getRam_Usage() + "\n\n\n");
 		}
 	}
 

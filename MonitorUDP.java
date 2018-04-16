@@ -29,9 +29,7 @@ public class MonitorUDP {
 						String received = new String(dp.getData());
 						String parts[] = received.split(";");
 						String ipaddress = dp.getAddress().getHostAddress();
-						int port = dp.getPort();
-						estado.updateUsage(ipaddress,port,Float.parseFloat(parts[0]),Float.parseFloat(parts[1]));
-						//estado.printSize();
+						estado.updateUsage(ipaddress,porta,Double.parseDouble(parts[0]),Double.parseDouble(parts[1]));
 						estado.printStateTable();
 					} catch(SocketException se) {
 						se.printStackTrace();
