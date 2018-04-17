@@ -17,7 +17,7 @@ public class MonitorUDP {
 			TabelaEstado estado = new TabelaEstado();
 
 			//Enviar pedidos de probing
-			TimeSender ts = new TimeSender(porta,5);
+			TimeSender ts = new TimeSender(porta,5,mc);
 			ts.start();
 
 			while(true) {

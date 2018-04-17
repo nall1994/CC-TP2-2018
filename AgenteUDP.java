@@ -8,6 +8,7 @@ import java.lang.management.ManagementFactory;
 import com.sun.management.OperatingSystemMXBean;
 import java.util.concurrent.TimeUnit;
 import java.util.Random;
+import java.nio.charset.StandardCharsets;
 
 public class AgenteUDP {
 
@@ -31,7 +32,9 @@ public class AgenteUDP {
 				ms.receive(received);
 				ms.leaveGroup(group);
 				ms.close();
-				String sentence = new String(received.getData(),"UTF-8");
+				String sentence = new String(received.getData(), StandardCharsets.UTF_8);
+				String chave = ac.calculateMessageFromMonitor();
+				System.out.println(chave);
 					InetAddress ipaddress = received.getAddress();
 					OperatingSystemMXBean osBean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
 					float total_mem = (float) (osBean.getTotalPhysicalMemorySize() / MB);
