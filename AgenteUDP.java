@@ -33,7 +33,8 @@ public class AgenteUDP {
 				ms.leaveGroup(group);
 				ms.close();
 				String sentence = new String(received.getData(), StandardCharsets.UTF_8);
-				String chave = ac.calculateMessageFromMonitor();
+				String[] parts = sentence.split(";");
+				String chave = ac.calculateMessageFromMonitor(parts[0]);
 				if(chave.equals(sentence)) {
 					InetAddress ipaddress = received.getAddress();
 					OperatingSystemMXBean osBean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
@@ -42,7 +43,8 @@ public class AgenteUDP {
 					float cpu_load = (float) osBean.getSystemCpuLoad();
 					ram_usage = (double) (used_mem / total_mem) * 100;
 					cpu_usage = (double) (cpu_load * 100);
-					String keyToSend = ac.calculateMessageToMonitor();
+					String data = "" + ram_usage + "" + cpu_usage;
+					String keyToSend = ac.calculateMessageToMonitor(data);
 					String message = ram_usage + ";" + cpu_usage + ";" + keyToSend;
 					DatagramPacket dp = new DatagramPacket(message.getBytes(),message.length(),ipaddress,porta);
 					DatagramSocket ds = new DatagramSocket();

@@ -29,7 +29,8 @@ public class MonitorUDP {
 						ds.close();
 						String received = new String(dp.getData(), StandardCharsets.UTF_8);
 						String parts[] = received.split(";");
-						String chave = mc.calculateMessageFromAgent();
+						String data = "" + parts[0] + "" + parts[1];
+						String chave = mc.calculateMessageFromAgent(data);
 						if(chave.equals(parts[2])) {
 							String ipaddress = dp.getAddress().getHostAddress();
 							estado.updateUsage(ipaddress,porta,Double.parseDouble(parts[0]),Double.parseDouble(parts[1]));

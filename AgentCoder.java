@@ -7,10 +7,8 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class AgentCoder {
 	private static String keyString = "revcom";
-	private static String msg_from_monitor = "probe";
-	private static String msg_to_monitor = "dataSent";
 
-	public String calculateMessageFromMonitor() {
+	public String calculateMessageFromMonitor(String msg_from_monitor) {
 		String message = "";
 		try {
 			SecretKeySpec key = new SecretKeySpec(keyString.getBytes(),"HmacSHA256");
@@ -27,7 +25,7 @@ public class AgentCoder {
 		return message;
 	}
 
-	public String calculateMessageToMonitor() {
+	public String calculateMessageToMonitor(String msg_to_monitor) {
 		String message = "";
 		try {
 			SecretKeySpec key = new SecretKeySpec(keyString.getBytes(),"HmacSHA256");
