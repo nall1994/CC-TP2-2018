@@ -9,7 +9,7 @@ public class TabelaEstado {
 		servidores = new HashMap<String,ServerStructure>();
 	}
 
-	public void updateUsage(String IP, int porta,double ram_usage,double cpu_usage) {
+	public void updateUsage(String IP, int porta,double ram_usage,double cpu_usage,long rtt) {
 		ServerStructure ss = servidores.get(IP);
 		if(ss == null) {
 			ss = new ServerStructure(porta,ram_usage,cpu_usage,0,0.0f);
@@ -18,6 +18,7 @@ public class TabelaEstado {
 			ss.setPorta(porta);
 			ss.setRam_Usage(ram_usage);
 			ss.setCpu_Usage(cpu_usage);
+			ss.setRtt(rtt);
 		}
 	}
 
@@ -32,21 +33,10 @@ public class TabelaEstado {
 		return 1; //tudo ok
 	}
 
-	public int update_rtt(String IP,int porta, long rtt) {
-		ServerStructure ss = servidores.get(IP);
-		if(ss == null) {
-			return 2;
-		} else {
-			ss.setRtt(rtt);
-			ss.setPorta(porta);
-		}
-		return 1; //tudo ok
-	}
-
 	public void printStateTable() {
-		System.out.println("IP-----------------Porta---------------------CPU---------------------RAM\n");
+		System.out.println("IP-----------------Porta---------------------RTT-----------------------CPU---------------------RAM\n");
 		for(Map.Entry<String,ServerStructure> entry : servidores.entrySet()) {
-			System.out.println(entry.getKey() + "-----------------" + entry.getValue().getPorta() + "---------------------" + entry.getValue().getCpu_usage() + "---------------------" + entry.getValue().getRam_Usage() + "\n\n\n");
+			System.out.println(entry.getKey() + "-----------------" + entry.getValue().getPorta() + "---------------------" + entry.getValue().getRtt() +"---------------------" + entry.getValue().getCpu_usage() + "---------------------" + entry.getValue().getRam_Usage() + "\n\n\n");
 		}
 	}
 

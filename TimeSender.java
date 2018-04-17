@@ -24,9 +24,10 @@ public class TimeSender extends Thread {
 				InetAddress group = InetAddress.getByName("239.8.8.8");
 				ms.joinGroup(group);
 				String probe = "probe" + increase;
-				String msg_tmp = mc.calculateMessageToAgent(probe);
-				System.out.println(msg_tmp);
-				String msg = probe + ";" + msg_tmp;
+				long current_time = System.currentTimeMillis();
+				String data = probe + "" + current_time;
+				String msg_tmp = mc.calculateMessageToAgent(data);
+				String msg = data + ";" + msg_tmp + ";" + current_time;
 				DatagramPacket dp = new DatagramPacket(msg.getBytes(),msg.getBytes().length,group,porta);
 				ms.send(dp);
 				increase++;

@@ -47,7 +47,7 @@ public class AgenteUDP {
 					cpu_usage = (double) (cpu_load * 100);
 					String data = "" + ram_usage + "" + cpu_usage;
 					String keyToSend = ac.calculateMessageToMonitor(data);
-					String message = ram_usage + ";" + cpu_usage + ";" + keyToSend;
+					String message = ram_usage + ";" + cpu_usage + ";" + parts[2] + ";" + keyToSend;
 					DatagramPacket dp = new DatagramPacket(message.getBytes(),message.getBytes().length,ipaddress,porta);
 					DatagramSocket ds = new DatagramSocket();
 					Random rand = new Random();

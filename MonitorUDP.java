@@ -30,10 +30,13 @@ public class MonitorUDP {
 						String received = new String(dp.getData(), 0,dp.getLength());
 						String parts[] = received.split(";");
 						String data = "" + parts[0] + "" + parts[1];
+						long past_time = Long.parseLong(parts[2]);
+						long current_time = System.currentTimeMillis();
+						long rtt = current_time - past_time;
 						String chave = mc.calculateMessageFromAgent(data);
-						if(chave.equals(parts[2])) {
+						if(chave.equals(parts[3])) {
 							String ipaddress = dp.getAddress().getHostAddress();
-							estado.updateUsage(ipaddress,porta,Double.parseDouble(parts[0]),Double.parseDouble(parts[1]));
+							estado.updateUsage(ipaddress,porta,Double.parseDouble(parts[0]),Double.parseDouble(parts[1]), rtt);
 							estado.printStateTable();
 						} else {
 							System.out.println("The key did not match the one the agent has!\n");
@@ -47,4 +50,5 @@ public class MonitorUDP {
 			}
 
 		}
+
 }
