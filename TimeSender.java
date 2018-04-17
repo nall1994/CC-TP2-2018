@@ -25,8 +25,9 @@ public class TimeSender extends Thread {
 				ms.joinGroup(group);
 				String probe = "probe" + increase;
 				String msg_tmp = mc.calculateMessageToAgent(probe);
+				System.out.println(msg_tmp);
 				String msg = probe + ";" + msg_tmp;
-				DatagramPacket dp = new DatagramPacket(msg.getBytes("UTF-8"),msg.length(),group,porta);
+				DatagramPacket dp = new DatagramPacket(msg.getBytes(),msg.getBytes().length,group,porta);
 				ms.send(dp);
 				increase++;
 				ms.leaveGroup(group);

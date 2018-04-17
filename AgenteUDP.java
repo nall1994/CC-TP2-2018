@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.Random;
 import java.nio.charset.StandardCharsets;
 
+
 public class AgenteUDP {
 
 	public static void main(String[] args) {
@@ -32,10 +33,11 @@ public class AgenteUDP {
 				ms.receive(received);
 				ms.leaveGroup(group);
 				ms.close();
-				String sentence = new String(received.getData(), StandardCharsets.UTF_8);
+				String sentence = new String(received.getData(), 0, received.getLength());
 				String[] parts = sentence.split(";");
 				String chave = ac.calculateMessageFromMonitor(parts[0]);
-				if(chave.equals(sentence)) {
+				System.out.println("key from Monitor: " + parts[1] + "\n" + "key calculated: " + chave + "\n");
+				if(chave.equals(parts[1])) {
 					InetAddress ipaddress = received.getAddress();
 					OperatingSystemMXBean osBean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
 					float total_mem = (float) (osBean.getTotalPhysicalMemorySize() / MB);
@@ -46,7 +48,7 @@ public class AgenteUDP {
 					String data = "" + ram_usage + "" + cpu_usage;
 					String keyToSend = ac.calculateMessageToMonitor(data);
 					String message = ram_usage + ";" + cpu_usage + ";" + keyToSend;
-					DatagramPacket dp = new DatagramPacket(message.getBytes(),message.length(),ipaddress,porta);
+					DatagramPacket dp = new DatagramPacket(message.getBytes(),message.getBytes().length,ipaddress,porta);
 					DatagramSocket ds = new DatagramSocket();
 					Random rand = new Random();
 					int wait = rand.nextInt(10);
@@ -71,4 +73,5 @@ public class AgenteUDP {
 			
 		}
 	}
+
  }		

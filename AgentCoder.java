@@ -15,8 +15,6 @@ public class AgentCoder {
 			Mac m = Mac.getInstance("HmacSHA256");
 			m.init(key);
 			message = convertToHexadecimalString(m.doFinal(msg_from_monitor.getBytes()));
-		//} catch (SignatureException se) {
-			//System.out.println("Signature Exception caught!\n");
 		} catch (NoSuchAlgorithmException nsae) {
 			System.out.println("The chosen algorithm does not exist\n");
 		} catch (InvalidKeyException ike) {

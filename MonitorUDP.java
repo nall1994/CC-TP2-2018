@@ -27,7 +27,7 @@ public class MonitorUDP {
 						DatagramSocket ds = new DatagramSocket(porta);
 						ds.receive(dp);
 						ds.close();
-						String received = new String(dp.getData(), StandardCharsets.UTF_8);
+						String received = new String(dp.getData(), 0,dp.getLength());
 						String parts[] = received.split(";");
 						String data = "" + parts[0] + "" + parts[1];
 						String chave = mc.calculateMessageFromAgent(data);
