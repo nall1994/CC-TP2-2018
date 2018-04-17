@@ -23,7 +23,6 @@ public class TimeSender extends Thread {
 				ms.joinGroup(group);
 
 				String msg = mc.calculateMessageToAgent();
-				System.out.println(msg);
 				DatagramPacket dp = new DatagramPacket(msg.getBytes("UTF-8"),msg.length(),group,porta);
 				ms.send(dp);
 				ms.leaveGroup(group);

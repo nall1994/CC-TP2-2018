@@ -34,7 +34,7 @@ public class AgenteUDP {
 				ms.close();
 				String sentence = new String(received.getData(), StandardCharsets.UTF_8);
 				String chave = ac.calculateMessageFromMonitor();
-				System.out.println(chave);
+				if(chave.equals(sentence)) {
 					InetAddress ipaddress = received.getAddress();
 					OperatingSystemMXBean osBean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
 					float total_mem = (float) (osBean.getTotalPhysicalMemorySize() / MB);
@@ -42,7 +42,8 @@ public class AgenteUDP {
 					float cpu_load = (float) osBean.getSystemCpuLoad();
 					ram_usage = (double) (used_mem / total_mem) * 100;
 					cpu_usage = (double) (cpu_load * 100);
-					String message = ram_usage + ";" + cpu_usage;
+					String keyToSend = ac.calculateMessageToMonitor();
+					String message = ram_usage + ";" + cpu_usage + ";" + keyToSend;
 					DatagramPacket dp = new DatagramPacket(message.getBytes(),message.length(),ipaddress,porta);
 					DatagramSocket ds = new DatagramSocket();
 					Random rand = new Random();
@@ -56,6 +57,10 @@ public class AgenteUDP {
 					
 					ds.send(dp);
 					ds.close();
+				} else {
+					System.out.println("The key did not match with the one the monitor has!\n");
+				}
+					
 			} catch (UnknownHostException uhe) {
 				uhe.printStackTrace();
 			} catch(IOException ioe) {
