@@ -13,6 +13,7 @@ public class MonitorUDP {
 			InetAddress group;
 			MulticastSocket ms;
 			int porta = 8888;
+			MonitorCoder mc = new MonitorCoder();
 			TabelaEstado estado = new TabelaEstado();
 
 			//Enviar pedidos de probing

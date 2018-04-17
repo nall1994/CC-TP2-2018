@@ -17,6 +17,7 @@ public class AgenteUDP {
 		int porta = 8888;
 		double ram_usage = 0.0;
 		double cpu_usage = 0.0;
+		AgentCoder ac = new AgentCoder();
 		int MB = 1024;
 
 		while(true) {
