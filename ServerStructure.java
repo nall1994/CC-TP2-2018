@@ -9,12 +9,12 @@ public class ServerStructure {
 	private int no_answer;
 	private boolean operational;
 
-	public ServerStructure(int porta, double ram_usage, double cpu_usage, long rtt, float largura_banda) {
+	public ServerStructure(int porta, double ram_usage, double cpu_usage, long rtt) {
 		this.porta = porta;
 		this.ram_usage = ram_usage;
 		this.cpu_usage = cpu_usage;
 		this.rtt = rtt;
-		this.largura_banda = largura_banda;
+		this.largura_banda = 0;
 		this.no_answer = 0;
 		this.operational = true;
 	}
