@@ -6,6 +6,8 @@ public class ServerStructure {
 	private double cpu_usage;
 	private long rtt;
 	private float largura_banda;
+	private int no_answer;
+	private boolean operational;
 
 	public ServerStructure(int porta, double ram_usage, double cpu_usage, long rtt, float largura_banda) {
 		this.porta = porta;
@@ -13,6 +15,8 @@ public class ServerStructure {
 		this.cpu_usage = cpu_usage;
 		this.rtt = rtt;
 		this.largura_banda = largura_banda;
+		this.no_answer = 0;
+		this.operational = true;
 	}
 
 	public int getPorta() {
@@ -54,4 +58,24 @@ public class ServerStructure {
 	public void setLargura_Banda(float largura_banda) {
 		this.largura_banda = largura_banda;
 	}
-}
+
+	public boolean getOperational() {
+		return this.operational;
+	}
+
+	public int getNo_answer() {
+		return this.no_answer;
+	}
+
+	public void setOperational(boolean operational) {
+		this.operational = operational;
+	}
+
+	public void incrementNo_answer() {
+		this.no_answer++;
+	}
+
+	public void reset_no_answer() {
+		this.no_answer = 0;
+	}
+ }

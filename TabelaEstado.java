@@ -19,9 +19,23 @@ public class TabelaEstado {
 			ss.setRam_Usage(ram_usage);
 			ss.setCpu_Usage(cpu_usage);
 			ss.setRtt(rtt);
+			ss.reset_no_answer();
+			ss.setOperational(true);
 		}
+		update_no_answer(IP);
 	}
 
+	public void update_no_answer(String IP) {
+		for(Map.Entry<String,ServerStructure> entry : servidores.entrySet()) {
+			ServerStructure ss = entry.getValue();
+			if(!entry.getKey().equals(IP)) {
+				ss.incrementNo_answer();
+				if(ss.getNo_answer() >= 30)
+					ss.setOperational(false);
+			}
+		}
+	}
+ 
 	public int update_largura_de_banda(String IP,int porta,float largura_banda) {
 		ServerStructure ss = servidores.get(IP);
 		if(ss == null) {
@@ -36,7 +50,7 @@ public class TabelaEstado {
 	public void printStateTable() {
 		System.out.println("IP-----------------Porta---------------------RTT-----------------------CPU---------------------RAM\n");
 		for(Map.Entry<String,ServerStructure> entry : servidores.entrySet()) {
-			System.out.println(entry.getKey() + "-----------------" + entry.getValue().getPorta() + "---------------------" + entry.getValue().getRtt() +"---------------------" + entry.getValue().getCpu_usage() + "---------------------" + entry.getValue().getRam_Usage() + "\n\n\n");
+			System.out.println(entry.getKey() + "-----------------" + entry.getValue().getPorta() + "---------------------" + entry.getValue().getRtt() +"---------------------" + entry.getValue().getCpu_usage() + "---------------------" + entry.getValue().getRam_Usage() + "-------------" + entry.getValue().getOperational() + "\n\n\n");
 		}
 	}
 
