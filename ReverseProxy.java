@@ -3,6 +3,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -32,27 +33,53 @@ public class ReverseProxy {
 	private static String chooseServer() {
 		//cpu_usage above 0.9 is risk;
 		//ram_usage above 0.9 is risk;
-		//TALVEZ NAO PRECISEMOS DAS RISK LISTS;
-		// cpu and ram metric => 0.5*cpu_usage + 0.5*ram_usage (equal importance for both)
-		//populate a list with minimum cpu and ram metric
-		//perform least bandwidth used method!
-		//go through all servers, if cpu_usage || ram_usage > 0.9, add to risk list depending;
-		//Get all the values of cpu and ram metric, all the values of estimated bandwith:
-		// if a server has the least cpu and ram and bandwith, it is chosen, else
-		//!!!!!find a way to concile both metrics!!!!!
-		HashMap<String,Float> hmap = new HashMap<String,Float>();
-		HashMap<String,Float> hmap2 = new HashMap<String,Float>();
-		HashMap<String,Long> hmap3 = new HashMap<String,Long>();
+		//cpu and ram has abstract weigth of 4 (2 times more important than bandwidth and 4 times more important than rtt), bandwith of 2 and rtt of 1 
+		HashMap<String,Float> hmap = new HashMap<String,Float>(); //CPU and RAM metric
+		HashMap<String,Float> hmap2 = new HashMap<String,Float>(); // Bandwidth Metric
+		HashMap<String,Long> hmap3 = new HashMap<String,Long>(); // RTT metric
+		HashMap<String,Float> new_rtt_hmap; //RTT brought down to seconds metric
+		HashMap<String,Float> computed_results;
+
 		String crmetric_server = calculateCpuRamMetric(hmap);
 		String bmetric_server = calculateBandwidthMetric(hmap2);
 		String rttmetric_server = calculateRtt(hmap3);
 		if((crmetric_server.equalsIgnoreCase(bmetric_server)) && (crmetric_server.equalsIgnoreCase(rttmetric_server)))
 			return crmetric_server;
-		else {
-			//Como relacionar a metrica de utilização de cpu e ram com largura de banda e rtt
+		else if(crmetric_server.equalsIgnoreCase(bmetric_server)){
+			return crmetric_server;	
+		} else {
+			new_rtt_hmap = new HashMap<String,Float>();
+			//bandwidth brought down to Megabit level
+			for(Map.Entry<String,Float> entry : hmap2.entrySet()) {
+				float new_bw = entry.getValue() / ((float) (10^6));
+				hmap2.put(entry.getKey(),new_bw);
+			}
+			//rtt brought down to seconds level
+			for(Map.Entry<String,Long> entry : hmap3.entrySet()) {
+				float new_rtt = ((float) entry.getValue() / 1000.0f);
+				new_rtt_hmap.put(entry.getKey(),new_rtt);
+			}
+
+			//Compute result for each server using weights for metrics: 4(CPU&&RAM) , 2(BANDWIDTH) AND 1 FOR RTT
+			computed_results = new HashMap<String,Float>();
+			List<String> servers_known = new ArrayList<String>(tabela.getServidores().keySet());
+			for(int i = 0; i<servers_known.size();i++) {
+				String server = servers_known.get(i);
+				float result = 4 * hmap.get(server) + 2 * hmap2.get(server) + new_rtt_hmap.get(server);
+				computed_results.put(server,result);
+			}
+
+			String minimum_ip = "";
+			float minimum_value = 1000.0f;
+
+			for(Map.Entry<String,Float> entry : computed_results.entrySet()) {
+				if(entry.getValue() < minimum_value)
+					minimum_ip = entry.getKey();
+			}
+
+			return minimum_ip;
+
 		}
-		//Algoritmo de escolha do servidor
-		return "10.0.2.11";
 	}
 
 	private static String calculateCpuRamMetric(HashMap<String,Float> hmap) {
