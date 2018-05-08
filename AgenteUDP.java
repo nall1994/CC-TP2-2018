@@ -19,7 +19,7 @@ public class AgenteUDP {
 		int porta = 8888;
 		double ram_usage = 0.0;
 		double cpu_usage = 0.0;
-		AgentCoder ac = new AgentCoder();
+		Coder ac = new Coder();
 		int MB = 1024;
 
 		while(true) {
@@ -35,7 +35,7 @@ public class AgenteUDP {
 				ms.close();
 				String sentence = new String(received.getData(), 0, received.getLength());
 				String[] parts = sentence.split(";");
-				String chave = ac.calculateMessageFromMonitor(parts[0]);
+				String chave = ac.calculateMessage(parts[0]);
 				System.out.println("key from Monitor: " + parts[1] + "\n" + "key calculated: " + chave + "\n");
 				if(chave.equals(parts[1])) {
 					InetAddress ipaddress = received.getAddress();
@@ -46,7 +46,7 @@ public class AgenteUDP {
 					ram_usage = (double) (used_mem / total_mem) * 100;
 					cpu_usage = (double) (cpu_load * 100);
 					String data = "" + ram_usage + "" + cpu_usage;
-					String keyToSend = ac.calculateMessageToMonitor(data);
+					String keyToSend = ac.calculateMessage(data);
 					Random rand = new Random();
 					int wait = rand.nextInt(10);
 					try{

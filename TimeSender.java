@@ -26,7 +26,7 @@ public class TimeSender extends Thread {
 				String probe = "probe" + increase;
 				long current_time = System.currentTimeMillis();
 				String data = probe + "" + current_time;
-				String msg_tmp = mc.calculateMessageToAgent(data);
+				String msg_tmp = mc.calculateMessage(data);
 				String msg = data + ";" + msg_tmp + ";" + current_time;
 				DatagramPacket dp = new DatagramPacket(msg.getBytes(),msg.getBytes().length,group,porta);
 				ms.send(dp);

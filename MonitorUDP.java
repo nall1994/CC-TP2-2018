@@ -13,7 +13,7 @@ public class MonitorUDP {
 			InetAddress group;
 			MulticastSocket ms;
 			int porta = 8888;
-			MonitorCoder mc = new MonitorCoder();
+			Coder mc = new Coder();
 			TabelaEstado estado = new TabelaEstado();
 
 			//Enviar pedidos de probing
@@ -33,7 +33,7 @@ public class MonitorUDP {
 						long past_time = Long.parseLong(parts[2]);
 						long current_time = System.currentTimeMillis();
 						long rtt = current_time - past_time;
-						String chave = mc.calculateMessageFromAgent(data);
+						String chave = mc.calculateMessage(data);
 						if(chave.equals(parts[3])) {
 							String ipaddress = dp.getAddress().getHostAddress();
 							estado.updateUsage(ipaddress,porta,Double.parseDouble(parts[0]),Double.parseDouble(parts[1]), rtt);
