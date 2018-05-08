@@ -37,7 +37,10 @@ public class TabelaEstado {
 		if(ss == null) {
 			return 2; // 2 pode ser o erro que dá quando o IP não existe na hash
 		} else {
-			ss.setLargura_Banda(largura_banda);
+			float previous_total_bw = ss.getLarguraBanda()*ss.getBwUpdates();
+			ss.incrementBwUpdates();
+			float current_bw = (previous_total_bw + largura_banda) / (float) ss.getBwUpdates();
+			ss.setLargura_Banda(current_bw);
 			ss.setPorta(porta);
 		}
 		return 1; //tudo ok
@@ -50,7 +53,12 @@ public class TabelaEstado {
 		}
 	}
 
+	public HashMap<String,ServerStructure> getServidores() {
+		return this.servidores;
+	}
+
 	public void printSize() {
 		System.out.println(servidores.size());
 	}
+
 }

@@ -8,6 +8,7 @@ public class ServerStructure {
 	private float largura_banda;
 	private int no_answer;
 	private boolean operational;
+	private int bw_updates;
 
 	public ServerStructure(int porta, double ram_usage, double cpu_usage, long rtt) {
 		this.porta = porta;
@@ -17,6 +18,7 @@ public class ServerStructure {
 		this.largura_banda = 0;
 		this.no_answer = 0;
 		this.operational = true;
+		this.bw_updates=0;
 	}
 
 	public int getPorta() {
@@ -77,5 +79,17 @@ public class ServerStructure {
 
 	public void reset_no_answer() {
 		this.no_answer = 0;
+	}
+
+	public void resetBwUpdates(){
+		this.bw_updates = 0;
+	}
+
+	public int getBwUpdates() {
+		return this.bw_updates;
+	}
+
+	public void incrementBwUpdates() {
+		this.bw_updates++;
 	}
  }

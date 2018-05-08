@@ -6,9 +6,9 @@ public class TimeSender extends Thread {
 	int porta;
 	int seconds_between_probes;
 	int increase;
-	MonitorCoder mc;
+	Coder mc;
 
-	public TimeSender(int porta, int seconds_between_probes, MonitorCoder mc) {
+	public TimeSender(int porta, int seconds_between_probes, Coder mc) {
 		this.porta = porta;
 		this.seconds_between_probes = seconds_between_probes;
 		this.mc = mc;

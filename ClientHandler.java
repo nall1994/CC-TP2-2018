@@ -26,7 +26,7 @@ public class ClientHandler extends Thread {
 			while(true) {
 				long past_time;
 				byte[] buffer = new byte[5000];
-				int size;
+				int size_in_bits;
 				long present_time;
 				int length = in_cliente.read(buffer);
 				past_time = System.currentTimeMillis();
@@ -34,11 +34,12 @@ public class ClientHandler extends Thread {
 				out_server.flush();
 				buffer = new byte[5000];
 				int length2 = in_server.read(buffer);
-				size = length + length2;
+				size_in_bits = (length + length2)*8;
 				present_time = System.currentTimeMillis();
-				float bandwidth = (float) ((float) size/(float) (present_time - past_time));
-				tabela.update_largura_de_banda(socket_to_server.getInetAddress().getHostAddress(),8888,bandwidth);
-				size=0;
+				float time_in_seconds = (float) ((float) (present_time - past_time) / (1000.0f));
+				float bandwidth_bps = (float) ((float) size_in_bits/ time_in_seconds);
+				tabela.update_largura_de_banda(socket_to_server.getInetAddress().getHostAddress(),8888,bandwidth_bps);
+				size_in_bits=0;
 				out_cliente.write(buffer,0,length2);
 				out_cliente.flush();
  
