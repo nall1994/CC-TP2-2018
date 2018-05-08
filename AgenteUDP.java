@@ -43,8 +43,8 @@ public class AgenteUDP {
 					float total_mem = (float) (osBean.getTotalPhysicalMemorySize() / MB);
 					float used_mem = (float) (total_mem - (osBean.getFreePhysicalMemorySize() / MB));
 					float cpu_load = (float) osBean.getSystemCpuLoad();
-					ram_usage = (double) (used_mem / total_mem) * 100;
-					cpu_usage = (double) (cpu_load * 100);
+					ram_usage = (double) (used_mem / total_mem);
+					cpu_usage = (double) (cpu_load);
 					String data = "" + ram_usage + "" + cpu_usage;
 					String keyToSend = ac.calculateMessage(data);
 					Random rand = new Random();
