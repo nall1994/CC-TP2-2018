@@ -10,8 +10,8 @@ node n1 {
 	!
     }
     canvas c1
-    iconcoords {162.0 117.0}
-    labelcoords {162.0 149.0}
+    iconcoords {106.0 52.0}
+    labelcoords {106.0 84.0}
     interface-peer {eth0 n4}
 }
 
@@ -21,15 +21,20 @@ node n2 {
     network-config {
 	hostname n2
 	!
+	interface eth1
+	 ip address 10.0.1.10/24
+	 ipv6 address 2001:1::10/64
+	!
 	interface eth0
 	 ip address 10.0.0.13/24
 	 ipv6 address 2001:0::13/64
 	!
     }
     canvas c1
-    iconcoords {702.0 177.0}
-    labelcoords {702.0 209.0}
+    iconcoords {487.0 215.0}
+    labelcoords {487.0 247.0}
     interface-peer {eth0 n4}
+    interface-peer {eth1 n6}
 }
 
 node n3 {
@@ -44,8 +49,8 @@ node n3 {
 	!
     }
     canvas c1
-    iconcoords {163.0 319.0}
-    labelcoords {163.0 351.0}
+    iconcoords {100.0 311.0}
+    labelcoords {100.0 343.0}
     interface-peer {eth0 n4}
 }
 
@@ -56,8 +61,8 @@ node n4 {
 	!
     }
     canvas c1
-    iconcoords {415.0 224.0}
-    labelcoords {415.0 248.0}
+    iconcoords {300.0 215.0}
+    labelcoords {300.0 239.0}
     interface-peer {e0 n1}
     interface-peer {e1 n5}
     interface-peer {e2 n3}
@@ -76,9 +81,48 @@ node n5 {
 	!
     }
     canvas c1
-    iconcoords {164.0 218.0}
-    labelcoords {164.0 250.0}
+    iconcoords {106.0 175.0}
+    labelcoords {106.0 207.0}
     interface-peer {eth0 n4}
+}
+
+node n6 {
+    type router
+    model router
+    network-config {
+	hostname n6
+	!
+	interface eth1
+	 ip address 10.0.2.1/24
+	 ipv6 address 2001:2::1/64
+	!
+	interface eth0
+	 ip address 10.0.1.1/24
+	 ipv6 address 2001:1::1/64
+	!
+    }
+    canvas c1
+    iconcoords {695.0 113.0}
+    labelcoords {695.0 145.0}
+    interface-peer {eth0 n2}
+    interface-peer {eth1 n7}
+}
+
+node n7 {
+    type router
+    model PC
+    network-config {
+	hostname n7
+	!
+	interface eth0
+	 ip address 10.0.2.20/24
+	 ipv6 address 2001:2::20/64
+	!
+    }
+    canvas c1
+    iconcoords {908.0 216.0}
+    labelcoords {908.0 248.0}
+    interface-peer {eth0 n6}
 }
 
 link l1 {
@@ -98,6 +142,16 @@ link l3 {
 
 link l4 {
     nodes {n4 n2}
+    bandwidth 0
+}
+
+link l5 {
+    nodes {n2 n6}
+    bandwidth 0
+}
+
+link l6 {
+    nodes {n6 n7}
     bandwidth 0
 }
 
