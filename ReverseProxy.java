@@ -32,11 +32,9 @@ public class ReverseProxy {
 		try {
 			while(true) {
 				Socket socket_to_client = ss.accept();
-				String serv_ip = "10.0.0.10"; //chooseServer();
-				for(Map.Entry<String,ServerStructure> entry : tabela.getServidores().entrySet()) {
-					System.out.println(entry.getKey());
-				}
-				if(serv_ip != null) {
+				String serv_ip = chooseServer();
+				System.out.println("CHOSEN IP: " + serv_ip);
+				if(serv_ip != "") {
 					System.out.println("Entered");
 					InetAddress ip = InetAddress.getByName(serv_ip);
 					Socket socket_to_server = new Socket(ip,porta);
@@ -135,6 +133,7 @@ public class ReverseProxy {
 		Element e = countMinimum(sorted_ranking);
 		String chosen_ip="";
 
+
 		if(e.number_min==1)
 			chosen_ip = e.ips.get(0);
 		else {
@@ -166,12 +165,16 @@ public class ReverseProxy {
 		Element e = new Element();
 
 		for(Map.Entry<String,Double> entry : sorted_ranking.entrySet()) {	
-			if(last_value == entry.getValue()) {
+			if(times==0) {
+				last_value = entry.getValue();
 				number_min++;
 				times++;
 				e.ips.add(entry.getKey());
+			}else if(last_value == entry.getValue()) {
+				number_min++;
+				e.ips.add(entry.getKey());
 				last_value = entry.getValue();
-			}
+			} 
 		}
 
 		e.number_min = number_min;

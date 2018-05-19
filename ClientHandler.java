@@ -25,27 +25,30 @@ public class ClientHandler extends Thread {
 
 			while(true) {
 				long past_time;
-				byte[] buffer = new byte[5000];
+				byte[] buffer = new byte[64000];
 				int size_in_bits;
 				long present_time;
 				int length = in_cliente.read(buffer);
 				past_time = System.currentTimeMillis();
-				System.out.println("before sending");
-				out_server.write(buffer,0,length);
-				System.out.println("Sent");
-				out_server.flush();
-				buffer = new byte[5000];
-				System.out.println("before reading");
+				if(length > 0) {
+					out_server.write(buffer,0,length);
+					out_server.flush();
+				}
+				buffer = new byte[64000];
 				int length2 = in_server.read(buffer);
-				System.out.println("read!");
 				size_in_bits = (length + length2)*8;
 				present_time = System.currentTimeMillis();
-				float time_in_seconds = (float) ((float) (present_time - past_time) / (1000.0f));
-				float bandwidth_bps = (float) ((float) size_in_bits/ time_in_seconds);
-				tabela.update_largura_de_banda(socket_to_server.getInetAddress().getHostAddress(),8888,bandwidth_bps);
+				if(length>0 && length2>0) {
+					float time_in_seconds = (float) ((float) (present_time - past_time) / (1000.0f));
+					float bandwidth_bps = (float) ((float) size_in_bits/ time_in_seconds);
+					tabela.update_largura_de_banda(socket_to_server.getInetAddress().getHostAddress(),8888,bandwidth_bps);
+				}
 				size_in_bits=0;
-				out_cliente.write(buffer,0,length2);
-				out_cliente.flush();
+				if(length2 > 0) {
+					out_cliente.write(buffer,0,length2);
+					out_cliente.flush();
+				}
+				
  
 			}
 		} catch(IOException ex){

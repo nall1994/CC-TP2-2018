@@ -47,9 +47,10 @@ public class TabelaEstado {
 	}
 
 	public   synchronized void printStateTable() {
-		System.out.println("IP-----------------Porta---------------------RTT-----------------------CPU---------------------RAM\n");
+		System.out.println("IP-----------------Porta---------------------RTT-------------------------LARG_BANDA-----------------------CPU---------------------RAM\n");
 		for(Map.Entry<String,ServerStructure> entry : servidores.entrySet()) {
-			System.out.println(entry.getKey() + "-----------------" + entry.getValue().getPorta() + "---------------------" + entry.getValue().getRtt() +"---------------------" + entry.getValue().getCpu_usage() + "---------------------" + entry.getValue().getRam_Usage() + "-------------" + entry.getValue().getOperational() + "\n\n\n");
+			float largura_banda = ((float) entry.getValue().getLarguraBanda() / (1024*8)); //put in Mbytes
+			System.out.println(entry.getKey() + "-----------------" + entry.getValue().getPorta() + "---------------------" + entry.getValue().getRtt() +"---------------------" + largura_banda + "-------------------------" + entry.getValue().getCpu_usage() + "---------------------" + entry.getValue().getRam_Usage() + "-------------" + entry.getValue().getOperational() + "\n\n\n");
 		}
 	}
 
