@@ -17,7 +17,6 @@ import java.util.Set;
 public class ReverseProxy {
 	private static final int porta = 80;
 	static ServerSocket ss;
-	static TabelaEstado tabela = new TabelaEstado();
 
 	public static void main(String[] args) {
 		try {
@@ -32,14 +31,14 @@ public class ReverseProxy {
 				Socket socket_to_client = ss.accept();
 				//String serv_ip = chooseServer();
 				String serv_ip = "10.0.0.10";
-				for(Map.Entry<String,ServerStructure> entry : tabela.getServidores().entrySet()) {
+				for(Map.Entry<String,ServerStructure> entry : TabelaEstado.getServidores().entrySet()) {
 					System.out.println(entry.getKey());
 				}
 				if(serv_ip != null) {
 					System.out.println("Entered");
 					InetAddress ip = InetAddress.getByName(serv_ip);
 					Socket socket_to_server = new Socket(ip,porta);
-					ClientHandler ch = new ClientHandler(socket_to_client,socket_to_server,tabela);
+					ClientHandler ch = new ClientHandler(socket_to_client,socket_to_server);
 					ch.start();
 				}
 			}
@@ -250,13 +249,13 @@ public class ReverseProxy {
 	private static void fillHashMapDouble(String metric,HashMap<String,Double> hmap) {
 		switch(metric) {
 			case "cpu":
-					for(Map.Entry<String,ServerStructure> entry : tabela.getServidores().entrySet()) {
+					for(Map.Entry<String,ServerStructure> entry : TabelaEstado.getServidores().entrySet()) {
 						if(entry.getValue().getOperational())
 							hmap.put(entry.getKey(),entry.getValue().getCpu_usage());
 					}
 					break;
 			case "ram":
-					for(Map.Entry<String,ServerStructure> entry : tabela.getServidores().entrySet()) {
+					for(Map.Entry<String,ServerStructure> entry : TabelaEstado.getServidores().entrySet()) {
 						if(entry.getValue().getOperational())
 							hmap.put(entry.getKey(),entry.getValue().getRam_Usage());
 					}
@@ -267,7 +266,7 @@ public class ReverseProxy {
 
 	private static void fillHashMapFloat(String metric, HashMap<String,Float> hmap) {
 		if(metric.equalsIgnoreCase("lb")) {
-			for(Map.Entry<String,ServerStructure> entry : tabela.getServidores().entrySet()) {
+			for(Map.Entry<String,ServerStructure> entry : TabelaEstado.getServidores().entrySet()) {
 				if(entry.getValue().getOperational())
 					hmap.put(entry.getKey(),entry.getValue().getLarguraBanda());
 			}
@@ -277,7 +276,7 @@ public class ReverseProxy {
 	private static void fillHashMapLong(String metric, HashMap<String,Long> hmap) {
 
 		if(metric.equalsIgnoreCase("rtt")) {
-			for(Map.Entry<String,ServerStructure> entry : tabela.getServidores().entrySet()) {
+			for(Map.Entry<String,ServerStructure> entry : TabelaEstado.getServidores().entrySet()) {
 				if(entry.getValue().getOperational())
 					hmap.put(entry.getKey(),entry.getValue().getRtt());
 			}

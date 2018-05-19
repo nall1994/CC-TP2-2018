@@ -6,14 +6,12 @@ import java.net.InetAddress;
 import java.io.IOException;
 
 public class ClientHandler extends Thread {
-	TabelaEstado tabela;
 	Socket socket_to_client;
 	Socket socket_to_server;
 
-	public ClientHandler(Socket socket_to_client,Socket socket_to_server,TabelaEstado tabela) {
+	public ClientHandler(Socket socket_to_client,Socket socket_to_server) {
 		this.socket_to_client = socket_to_client;
 		this.socket_to_server = socket_to_server;
-		this.tabela = tabela;
 	}
 
 	public void run() {
@@ -42,7 +40,7 @@ public class ClientHandler extends Thread {
 				present_time = System.currentTimeMillis();
 				float time_in_seconds = (float) ((float) (present_time - past_time) / (1000.0f));
 				float bandwidth_bps = (float) ((float) size_in_bits/ time_in_seconds);
-				tabela.update_largura_de_banda(socket_to_server.getInetAddress().getHostAddress(),8888,bandwidth_bps);
+				TabelaEstado.update_largura_de_banda(socket_to_server.getInetAddress().getHostAddress(),8888,bandwidth_bps);
 				size_in_bits=0;
 				out_cliente.write(buffer,0,length2);
 				out_cliente.flush();

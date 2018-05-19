@@ -14,7 +14,6 @@ public class MonitorUDP {
 			MulticastSocket ms;
 			int porta = 8888;
 			Coder mc = new Coder();
-			TabelaEstado estado = new TabelaEstado();
 
 			//Enviar pedidos de probing
 			TimeSender ts = new TimeSender(porta,5,mc);
@@ -36,8 +35,8 @@ public class MonitorUDP {
 						String chave = mc.calculateMessage(data);
 						if(chave.equals(parts[3])) {
 							String ipaddress = dp.getAddress().getHostAddress();
-							estado.updateUsage(ipaddress,porta,Double.parseDouble(parts[0]),Double.parseDouble(parts[1]), rtt);
-							estado.printStateTable();
+							TabelaEstado.updateUsage(ipaddress,porta,Double.parseDouble(parts[0]),Double.parseDouble(parts[1]), rtt);
+							TabelaEstado.printStateTable();
 						} else {
 							System.out.println("The key did not match the one the agent has!\n");
 						} 
