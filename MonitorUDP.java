@@ -6,16 +6,20 @@ import java.net.UnknownHostException;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
+import java.lang.Thread;
 
-public class MonitorUDP {
+public class MonitorUDP extends Thread {
+	InetAddress group;
+	MulticastSocket ms;
+	int porta = 8888;
+	Coder mc = new Coder();
+	TabelaEstado tabela;
 
-		public static void main(String[] args) {
-			InetAddress group;
-			MulticastSocket ms;
-			int porta = 8888;
-			Coder mc = new Coder();
+	public MonitorUDP(TabelaEstado tabela) {
+		this.tabela = tabela;
+	}
 
-			//Enviar pedidos de probing
+		public void run() {
 			TimeSender ts = new TimeSender(porta,5,mc);
 			ts.start();
 
@@ -35,8 +39,8 @@ public class MonitorUDP {
 						String chave = mc.calculateMessage(data);
 						if(chave.equals(parts[3])) {
 							String ipaddress = dp.getAddress().getHostAddress();
-							TabelaEstado.updateUsage(ipaddress,porta,Double.parseDouble(parts[0]),Double.parseDouble(parts[1]), rtt);
-							TabelaEstado.printStateTable();
+							tabela.updateUsage(ipaddress,porta,Double.parseDouble(parts[0]),Double.parseDouble(parts[1]), rtt);
+							tabela.printStateTable();
 						} else {
 							System.out.println("The key did not match the one the agent has!\n");
 						} 
@@ -47,7 +51,6 @@ public class MonitorUDP {
 						ioe.printStackTrace();
 					} 
 			}
-
 		}
 
 }
