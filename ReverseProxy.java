@@ -21,14 +21,26 @@ public class ReverseProxy {
 
 	public static void main(String[] args) {
 		try {
+			ss = new ServerSocket(porta);
+		} catch(IOException ex) {
+			ex.printStackTrace();
+		}
+		
+		try {
 			while(true) {
-				ss = new ServerSocket(porta);
+				//System.out.println("WENT");
 				Socket socket_to_client = ss.accept();
-				String serv_ip = chooseServer();
+				//String serv_ip = chooseServer();
+				String serv_ip = "10.0.0.10";
+				for(Map.Entry<String,ServerStructure> entry : tabela.getServidores().entrySet()) {
+					System.out.println(entry.getKey());
+				}
 				if(serv_ip != null) {
+					System.out.println("Entered");
 					InetAddress ip = InetAddress.getByName(serv_ip);
-					Socket socket_to_server = new Socket(ip,8888);
+					Socket socket_to_server = new Socket(ip,porta);
 					ClientHandler ch = new ClientHandler(socket_to_client,socket_to_server,tabela);
+					ch.start();
 				}
 			}
 		} catch (IOException ex) {
