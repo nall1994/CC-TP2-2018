@@ -3,7 +3,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class TabelaEstado {
-	static HashMap<String,ServerStructure> servidores = new HashMap<String,ServerStructure>();
+	private static HashMap<String,ServerStructure> servidores = new HashMap<String,ServerStructure>();
 
 	public static synchronized void updateUsage(String IP, int porta,double ram_usage,double cpu_usage,long rtt) {
 		ServerStructure ss = servidores.get(IP);
