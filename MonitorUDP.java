@@ -51,9 +51,6 @@ public class MonitorUDP extends Thread {
 							//coletar o endereço ip do agente que enviou a mensagem e atualizar a tabela de estado com a estatistica de utilizacao de recursos e rtt
 							String ipaddress = dp.getAddress().getHostAddress();
 							tabela.updateUsage(ipaddress,porta,Double.parseDouble(parts[0]),Double.parseDouble(parts[1]), rtt);
-
-							//imprimir tabela de estado
-							tabela.printStateTable();
 						} else {
 							System.out.println("The key did not match the one the agent has!\n");
 						} 

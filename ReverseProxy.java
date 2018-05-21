@@ -33,6 +33,7 @@ public class ReverseProxy {
 			while(true) {
 				Socket socket_to_client = ss.accept(); //escutar na porta 80 e esperar pelo pedido de um cliente
 				String serv_ip = chooseServer(); //escolher o servidor que vai atender o pedido com base nas métricas da tabela de estado
+				tabela.printStateTable(); // imprimir a tabela de estado
 				System.out.println("CHOSEN IP: " + serv_ip); // imprimir o servidor escolhido na consola da reverse proxy
 				if(serv_ip != "") { // apenas uma condição de segurança para que não haja erro no lado do cliente
 					InetAddress ip = InetAddress.getByName(serv_ip); //coletar o inetaddress do servidor
@@ -48,14 +49,14 @@ public class ReverseProxy {
 		}
 	}
 
-	//Comparator de entradas que, dada uma entrada de chave string e valor float, compara os valores float de cada um dos objetos
+	//Comparator de entradas que, dada uma entrada de chave string e valor float, compara os valores float de cada um dos objetos (descending order)
 	static class MyComparatorFloat implements Comparator<Entry<String,Float>> {
 		public int compare(Entry<String,Float> o1, Entry<String,Float> o2) {
-			return o1.getValue().compareTo(o2.getValue());
+			return o2.getValue().compareTo(o1.getValue());
 		}
 	}
 
-	// Ordenação do conteúdo de um hashmap por valor e inserção num linkedhashmap para que a iteração seja pela ordem de inserção (tipo float)
+	// Ordenação do conteúdo de um hashmap por valor e inserção num linkedhashmap para que a iteração seja pela ordem de inserção (tipo float) 
 	public static LinkedHashMap<String,Float> sortByComparatorFloat(HashMap<String,Float> unsorted) {
 		List<Entry<String,Float>> list = new LinkedList<Entry<String,Float>>(unsorted.entrySet());
 		Collections.sort(list, new MyComparatorFloat());
@@ -67,7 +68,7 @@ public class ReverseProxy {
 		return sorted;
 	}
 
-	//Comparator de entradas que, dada uma entrada de chave string e valor double, compara os valores double de cada um dos objetos
+	//Comparator de entradas que, dada uma entrada de chave string e valor double, compara os valores double de cada um dos objetos (ascending order)
 	static class MyComparatorDouble implements Comparator<Entry<String,Double>> {
 		public int compare(Entry<String,Double> o1, Entry<String,Double> o2) {
 			return o1.getValue().compareTo(o2.getValue());
@@ -86,7 +87,7 @@ public class ReverseProxy {
 		return sorted;
 	}
 
-	//Comparator de entradas que, dada uma entrada de chave string e valor long, compara os valores long de cada um dos objetos
+	//Comparator de entradas que, dada uma entrada de chave string e valor long, compara os valores long de cada um dos objetos (ascending order)
 	static class MyComparatorLong implements Comparator<Entry<String,Long>> {
 		public int compare(Entry<String,Long> o1, Entry<String,Long> o2) {
 			return o1.getValue().compareTo(o2.getValue());
@@ -158,6 +159,9 @@ public class ReverseProxy {
 					if(resource_metric < min_value) { //se a metrica calculada é menor que à antiga menor
 						min_value = resource_metric; // a menor passa a ser a métrica calculada
 						chosen_ip = s; // e o ip escolhido passa a ser o servidor que tem esta métrica associada
+
+						//MUDAR AQUI; SE TIVER MAIS QUE UM COM METRICA IGUAL, PASSA PARA O CALCULO DA LARGURA DE BANDA PARA VER
+						// SE NA LARGURA BANDA FOR IGUAL PASSA PARA O RTT
 					}
 					i++;
 				}
@@ -210,7 +214,7 @@ public class ReverseProxy {
 	//Recebe uma métrica do tipo double e estabelece um ranking com base nesses valores (o hashmap recebido está ordenado , é linked)
 	private static LinkedHashMap<String,Double> establishRankingDouble(LinkedHashMap<String,Double> hmap) {
 		double last_value = 0.0;
-		double last_rank=0.5;
+		double last_rank=0.0;
 		LinkedHashMap<String,Double> return_hmap = new LinkedHashMap<>();
 
 		for(Map.Entry<String,Double> entry : hmap.entrySet()) { //para cada uma das entradas par-valor de hmap
@@ -218,6 +222,7 @@ public class ReverseProxy {
 				return_hmap.put(entry.getKey(),last_rank); // associar o ranking atual a este servidor no hashmap de retorno.
 			else { //caso contrário não têm o mesmo ranking e , logo incrementa-se em 0.5 (step no ranking) o ranking a atribuir a partir de agora
 				last_rank += 0.5;
+				last_value = entry.getValue();
 				return_hmap.put(entry.getKey(),last_rank); //associar o ranking atual a este servidor no hashmap de retorno.
 			}
 
@@ -229,7 +234,7 @@ public class ReverseProxy {
 	//Método precisamente igual ao establishRankingDouble, mas trabalha com tipos float
 	private static LinkedHashMap<String,Double> establishRankingFloat(LinkedHashMap<String,Float> hmap) {
 		float last_value = 0.0f;
-		double last_rank=0.5;
+		double last_rank=0.0;
 		LinkedHashMap<String,Double> return_hmap = new LinkedHashMap<>();
 
 		for(Map.Entry<String,Float> entry : hmap.entrySet()) {
@@ -237,8 +242,11 @@ public class ReverseProxy {
 				return_hmap.put(entry.getKey(),last_rank);
 			else {
 				last_rank += 0.5;
+				last_value = entry.getValue();
 				return_hmap.put(entry.getKey(),last_rank);
 			}
+
+			if(entry.getValue() == 0.0) return_hmap.put(entry.getKey(),0.0);
 
 		}
 
@@ -248,7 +256,7 @@ public class ReverseProxy {
 	//Método precisamente igual ao establishRankingDouble , mas trabalha com tipos long
 	private static LinkedHashMap<String,Double> establishRankingLong(LinkedHashMap<String,Long> hmap) {
 		long last_value = 0;
-		double last_rank=0.5;
+		double last_rank=0.0;
 		LinkedHashMap<String,Double> return_hmap = new LinkedHashMap<>();
 
 		for(Map.Entry<String,Long> entry : hmap.entrySet()) {
@@ -256,6 +264,7 @@ public class ReverseProxy {
 				return_hmap.put(entry.getKey(),last_rank);
 			else {
 				last_rank += 0.5;
+				last_value = entry.getValue();
 				return_hmap.put(entry.getKey(),last_rank);
 			}
 
