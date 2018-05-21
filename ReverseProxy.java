@@ -153,23 +153,61 @@ public class ReverseProxy {
 			double min_value = Double.MAX_VALUE;
 			int i = 0;
 			ArrayList<String> ips = e.ips;
-			for(String s : ips) { // para todos os servidores com ranking minimo
-				if(i<e.number_min) { // se ainda estivermos dentro do intervalo de 0 até numero de servidores com ranking minimo (exclusive)
-					double resource_metric = 0.5 * cpu_metric.get(s) + 0.5 * ram_metric.get(s); //calcular métrica conjunta de cpu e ram, atribuindo igual importancia aos dois
-					if(resource_metric < min_value) { //se a metrica calculada é menor que à antiga menor
-						min_value = resource_metric; // a menor passa a ser a métrica calculada
-						chosen_ip = s; // e o ip escolhido passa a ser o servidor que tem esta métrica associada
+			HashMap<String,Double> cr_metric = new HashMap<>();
+			for(String s : ips) {
+				double metric = 0.5 * cpu_metric.get(s) + 0.5 * ram_metric.get(s);
+				cr_metric.put(s,metric);
+			}
+			LinkedHashMap<String,Double> ordered_cr_metric = sortByComparatorDouble(cr_metric);
+			ips = new ArrayList<>();
+			for(Map.Entry<String,Double> entry : ordered_cr_metric.entrySet()) {
+				if(entry.getValue() < min_value) {
+					min_value = entry.getValue();
+					ips = new ArrayList<String>();
+					ips.add(entry.getKey());
+				} else if(entry.getValue() == min_value)
+					ips.add(entry.getKey());
+				else break;
+			}
 
-						//MUDAR AQUI; SE TIVER MAIS QUE UM COM METRICA IGUAL, PASSA PARA O CALCULO DA LARGURA DE BANDA PARA VER
-						// SE NA LARGURA BANDA FOR IGUAL PASSA PARA O RTT
+			if(ips.size() == 1) chosen_ip = ips.get(0);
+			else {
+				HashMap<String,Float> lb_metric = new HashMap<>();
+				for(String s : ips) 
+					lb_metric.put(s,bandwidth_metric.get(s));
+				LinkedHashMap<String,Float> ordered_lb_metric = sortByComparatorFloat(lb_metric);
+				ips = new ArrayList<String>();
+				ArrayList<String> ips0 = new ArrayList<String>();
+				float lb_value = Float.MIN_VALUE;
+				for(Map.Entry<String,Float> entry : ordered_lb_metric.entrySet()) {
+					if(entry.getValue() > lb_value) {
+						lb_value = entry.getValue();
+						ips = new ArrayList<String>();
+						ips.add(entry.getKey());
+					} else if(entry.getValue() == lb_value) {
+						ips.add(entry.getKey());
+					} else if(entry.getValue() == 0)
+						ips0.add(entry.getKey());
+					else break;
+				}
+				if(ips0.size() > 0) ips = ips0;
+
+				if(ips.size() == 1) chosen_ip = ips.get(0);
+				else {
+					HashMap<String,Long> rtt_m = new HashMap<>();
+					for(String s : ips) 
+						rtt_m.put(s,rtt_metric.get(s));
+					long value = Long.MAX_VALUE;
+					for(Map.Entry<String,Long> entry : rtt_m.entrySet()) {
+						if(entry.getValue() < value) {
+							value = entry.getValue();
+							chosen_ip = entry.getKey();
+						}
 					}
-					i++;
 				}
 			}
-		}
-		
+		}		
 		return chosen_ip;
-
 	}
 
 	//Método para calcular o número de servidores e os servidores com ranking minimo
