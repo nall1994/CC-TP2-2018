@@ -150,8 +150,8 @@ public class ReverseProxy {
 			chosen_ip = e.ips.get(0);
 		else {
 			//Se existir mais do que um servidor com o mesmo ranking minimo, dar prioridade aos seus recursos (a menor utilização de recursos é escolhida)
+			//extrair a metrica que da igual importancia ao cpu e a ram, associar ao seu servidor e ordenar esse hashmap
 			double min_value = Double.MAX_VALUE;
-			int i = 0;
 			ArrayList<String> ips = e.ips;
 			HashMap<String,Double> cr_metric = new HashMap<>();
 			for(String s : ips) {
@@ -159,23 +159,28 @@ public class ReverseProxy {
 				cr_metric.put(s,metric);
 			}
 			LinkedHashMap<String,Double> ordered_cr_metric = sortByComparatorDouble(cr_metric);
+
+			//calcular o número de servidores com menor metrica de ram e cpu
 			ips = new ArrayList<>();
 			for(Map.Entry<String,Double> entry : ordered_cr_metric.entrySet()) {
 				if(entry.getValue() < min_value) {
 					min_value = entry.getValue();
-					ips = new ArrayList<String>();
+					ips = new ArrayList<String>(); 
 					ips.add(entry.getKey());
 				} else if(entry.getValue() == min_value)
 					ips.add(entry.getKey());
 				else break;
 			}
 
-			if(ips.size() == 1) chosen_ip = ips.get(0);
+			if(ips.size() == 1) chosen_ip = ips.get(0); // se for apenas um servidor com a menor metrica esse é o escolhido
 			else {
+				//extrair a largura de banda para os servidores restantes e ordenar o hashmap (sentido descendente)
 				HashMap<String,Float> lb_metric = new HashMap<>();
 				for(String s : ips) 
 					lb_metric.put(s,bandwidth_metric.get(s));
 				LinkedHashMap<String,Float> ordered_lb_metric = sortByComparatorFloat(lb_metric);
+
+				//Calcular os servidores com maior largura de banda ( se tiver algum com 0 quer dizer que ainda nao foi utilizado e é-lhe dada prioridade).
 				ips = new ArrayList<String>();
 				ArrayList<String> ips0 = new ArrayList<String>();
 				float lb_value = Float.MIN_VALUE;
@@ -190,13 +195,19 @@ public class ReverseProxy {
 						ips0.add(entry.getKey());
 					else break;
 				}
+
+				//Se existirem servidores com 0 de largura banda é esse o analisado.
 				if(ips0.size() > 0) ips = ips0;
 
-				if(ips.size() == 1) chosen_ip = ips.get(0);
+				if(ips.size() == 1) chosen_ip = ips.get(0); //se sobrar apenas um servidor, esse é o escolhido
 				else {
+					//Coletar todos os rtt dos servidores restantes
 					HashMap<String,Long> rtt_m = new HashMap<>();
 					for(String s : ips) 
 						rtt_m.put(s,rtt_metric.get(s));
+
+					//Ultimo passo possivel do algoritmo - calcular o valor minimo e o servidor ao qual pertence esse valor. O servidor escolhido é esse
+					//Se o algoritmo chegar a este ponto, daqui sairá com certeza um servidor e um apenas!
 					long value = Long.MAX_VALUE;
 					for(Map.Entry<String,Long> entry : rtt_m.entrySet()) {
 						if(entry.getValue() < value) {
