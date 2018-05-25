@@ -226,7 +226,6 @@ public class ReverseProxy {
 		int times = 0;
 		int number_min = 0;
 		double last_value = 0;
-		String[] ip;
 		Element e = new Element();
 
 		for(Map.Entry<String,Double> entry : sorted_ranking.entrySet()) {	
